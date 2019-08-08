@@ -1,0 +1,166 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+<meta name="description" content="" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>TCP协议 | qzzz</title>
+<link rel="shortcut icon" href="https://0x717a7a7a.github.io/favicon.ico?v=1565241187754">
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+<link rel="stylesheet" href="https://0x717a7a7a.github.io/styles/main.css">
+
+<script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+<script src="https://cdn.bootcss.com/moment.js/2.23.0/moment.min.js"></script>
+
+
+
+  </head>
+  <body>
+    <div class="main">
+      <div class="main-content">
+        <div class="site-header">
+  <a href="https://0x717a7a7a.github.io">
+  <img class="avatar" src="https://0x717a7a7a.github.io/images/avatar.png?v=1565241187754" alt="">
+  </a>
+  <h1 class="site-title">
+    qzzz
+  </h1>
+  <p class="site-description">
+    hello
+  </p>
+  <div class="menu-container">
+    
+      
+        <a href="/" class="menu">
+          首页
+        </a>
+      
+    
+      
+        <a href="/archives" class="menu">
+          归档
+        </a>
+      
+    
+      
+        <a href="/tags" class="menu">
+          标签
+        </a>
+      
+    
+      
+        <a href="/post/about" class="menu">
+          关于
+        </a>
+      
+    
+  </div>
+  <div class="social-container">
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  </div>
+</div>
+
+
+        <div class="post-detail">
+          <article class="post">
+            <h2 class="post-title">
+              TCP协议
+            </h2>
+            <div class="post-info">
+              <time class="post-time">
+                · 2019-07-08 ·
+              </time>
+              
+            </div>
+            
+            <div class="post-content">
+              <p>端口号标识了数据包应该交给主机上的哪个socket, 一个进程可以有多个端口号, 但是一个端口号只能在一个进程用(<em><strong>fork特殊</strong></em>).
+一个socket由一个五元组构成&lt;源ip, 源端口, 目的ip, 目的端口, fd&gt;</p>
+<h2>UDP</h2>
+<p>
+	特点:
+	无连接, 不可靠, 面向数据报 
+	<hr>
+	<p>
+	一个udp数据包最大只能携带2^16-8~64K字节的数据, 数据传输是全双工, 没有真正意义上的缓冲区(协议的), 只有内核(用户的)缓冲区.
+	</p>
+	<hr>
+</p>
+<h2>TCP</h2>
+***TCP的确认应答机制:***
+tcp每次向对方发送一个数据包, 对方就会ACK下一个准备接收的字节序号.
+***TCP的超时重传机制:***
+tcp在发送完数据后会启动一个计时器, 如果计时器到期对方还没有ACK就认为数据丢了, 重新发送
+***流量控制:<滑动窗口>***
+tcp不会每次只发送一个数据包, 而是通过滑动窗口来发送多个数据包, 接收方每次只需要回应最后一个接受到的字节的下一个字节, 对方就会知道之前的所有字节都已经收到了.
+如果数据包对了, 就需要一直ACK丢了的哪个报(重复应答)之后应答最后一个接受的字节的下一个字节, 如果是ack丢了直接回复后面的ack<快重传>
+***流量控制***
+接收端处理数据的速度是有限的, 如果接收缓冲区满了, 就会出现大量的丢包, 接收端将自己可以接收的缓冲区大小放入ACK中来控制窗口大小,  如果发送方的定时器超时(没有等到窗口更新通知), 发送方会发一个探测报文.
+***拥塞控制***
+如果在握手完之后直接发送大量数据, 就可能造成网络拥塞, 所以引入了**慢启动**机制, 先发送少量的数据包, 探测网路的拥塞情况, 之后再加快发送速度.<真实发送放的窗口大小是流量窗口和拥塞窗口的较小着>
+***延迟应答***
+如果接收数据的主机立即应答, 这时返回的窗口较小, 就会造成网络的吞吐量较小(有效载荷/总字节数), 所以一般会延迟响应接收到的数据以便提高吞吐量.
+***捎带应答***
+因为ACK和发送数据的字段不冲突, 所以可以在发送数据时捎带上ACK
+<h3>连接管理</h3>
+**三次握手**
+客户端:
+1. `socket()`建立文件描述符.
+2. `connect()`和服务端建立连接 SYN
+3. connect返回建立完成             ACK
+服务端:
+1. `socket()`建立文件描述符.
+2. `bind()`端口和描述符绑定.
+3. `listen()`监听端口.
+4. `accpet()`接收客户端的连接请求. 发送SYN + ACK
+5. accept返回连接建立完成.
+**四次挥手**
+客户端:
+1.`close()`发送 FIN 并进入FIN_WAIT_1状态等待ACK
+2.客户端收到ACK进入FIN_WAIT_2等待对方的FIN(半关闭状态)
+3.客户端收到对方的FIN进入TIME_WAIT状态(这个状态可能会超过进程的生命周期)要等待2MSL时间才关闭<msl一个报文的最大存活时间>(第一个msl的报文可能会丢失, 如果第二个还等不到就直接关闭)
+服务端:
+1.收到对方发来的FIN后回复ACK进入CLOSE_WAIT状态等待调用`close()`
+2.调用`close()`后进入LAST_ACK状态, 发送FIN对方回应后关闭
+3.如果没有收到对方的ACK则重新发送
+
+            </div>
+          </article>
+        </div>
+
+        
+          <div class="next-post">
+            <div class="next">下一篇</div>
+            <a href="https://0x717a7a7a.github.io/post/http-xie-yi">
+              <h3 class="post-title">
+                HTTP协议
+              </h3>
+            </a>
+          </div>
+        
+
+        
+
+        <div class="site-footer">
+  Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a> | 
+  <a class="rss" href="https://0x717a7a7a.github.io/atom.xml" target="_blank">RSS</a>
+</div>
+
+<script>
+  hljs.initHighlightingOnLoad()
+</script>
+
+      </div>
+    </div>
+  </body>
+</html>

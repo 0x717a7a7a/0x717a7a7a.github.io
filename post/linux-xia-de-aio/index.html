@@ -3,7 +3,7 @@
     <meta charset="utf-8" />
 <meta name="description" content="" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>关于 | qzzz</title>
+<title>Linux下的AIO | qzzz</title>
 <link rel="shortcut icon" href="https://0x717a7a7a.github.io/favicon.ico?v=1565241187754">
 <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
@@ -74,22 +74,33 @@
         <div class="post-detail">
           <article class="post">
             <h2 class="post-title">
-              关于
+              Linux下的AIO
             </h2>
             <div class="post-info">
               <time class="post-time">
-                · 2019-01-25 ·
+                · 2019-07-05 ·
               </time>
               
             </div>
             
             <div class="post-content">
-              <p>这是关于的页面，可以在这里向世界介绍你！</p>
+              <p>Linux下aio分为两种实现一种是glibc(posix aio)实现的,另一种是内核实现用libaio(linux aio)封装的.
+glibc实现是用户模拟异步io功能, 在aio.h中函数名以aio_xxx开头, 支持非direct-io, 利用线程与线程之间的异步工作特性
+libaio函数名以io_xx开头, 利用cpu和io设备异步工作特性</p>
 
             </div>
           </article>
         </div>
 
+        
+          <div class="next-post">
+            <div class="next">下一篇</div>
+            <a href="https://0x717a7a7a.github.io/post/test">
+              <h3 class="post-title">
+                Test
+              </h3>
+            </a>
+          </div>
         
 
         
